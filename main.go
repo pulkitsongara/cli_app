@@ -79,26 +79,31 @@ func signup() {
 		if err != nil {
 			fmt.Println("File is not opening")
 		}
+		flag := true
 		scanner := bufio.NewScanner(file1)
 		for scanner.Scan() {
 			line := scanner.Text()
-			if strings.Compare(line, email_id) == 0 {
-				fmt.Println(email_id, password)
-
+			half_part := strings.Split(line, ",")
+			e_temp := []string{half_part[0]}
+			e_half_line := strings.Join(e_temp, "")
+			e_parts := strings.Split(e_half_line, ":")
+			if e_parts[1] == email_id {
+				flag = true
 				fmt.Println("Email ID already exist.")
 				registration()
 				break
-			} else {
-				_, err = file.WriteString("email_id:" + email_id + ",password:" + password + "\n")
-				if err != nil {
-					fmt.Println("Error while writing file")
-				}
-				fmt.Println("User successfully registered.")
-				userOperations()
-				break
 			}
-
 		}
+		fmt.Println(flag, email_id)
+		if flag == true {
+			_, err = file1.WriteString("email_id:" + email_id + ",password:" + password + "\n")
+			if err != nil {
+				fmt.Println("Error while writing file")
+			}
+			fmt.Println("User successfully registered.")
+			userOperations()
+		}
+		defer file1.Close()
 	}
 	defer file.Close()
 }
